@@ -1,0 +1,21 @@
+settings:
+  variables:
+    entity_tablet: switch.galaxy_tab_a_screensaver
+    entity_browser_mod: media_player.tablet
+
+    translate_unknown: 未知
+    translate_idle: 不活跃
+    translate_home: 家
+    translate_not_home: 离家
+    translate_available: 可用
+    translate_no_updates: 暂无更新
+    translate_update_available: 可用更新
+    translate_updates_available: 可用更新...
+
+    translate_on: 开
+    translate_off: 关
+    translate_cool: 寒冷
+    translate_fan_only: 仅限粉丝
+    translate_playing: 播放中
+    translate_paused: 暂停
+    translate_standby: 睡眠模式

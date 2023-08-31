@@ -1,0 +1,39 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  extra_module_url:
+    - /hacsfiles/lovelace-card-mod/card-mod.js
+  themes: !include_dir_merge_named themes
+
+template: !include sidebar.yaml
+
+lovelace:
+  mode: yaml
+  resources:
+    - url: /hacsfiles/button-card/button-card.js
+      type: module
+    - url: /hacsfiles/lovelace-layout-card/layout-card.js
+      type: module
+    - url: /hacsfiles/swipe-card/swipe-card.js
+      type: module
+    - url: /hacsfiles/kiosk-mode/kiosk-mode.js
+      type: module
+    - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
+      type: module
+    - url: /hacsfiles/lovelace-curtain-card/curtain-card.js
+      type: module
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+shell_command:
+  update_xiaomi_miot: |-
+    wget -q -O - https://ghproxy.com/raw.githubusercontent.com/al-one/hass-xiaomi-miot/master/install.sh | HUB_DOMAIN=ghproxy.com/github.com ARCHIVE_TAG=latest bash -
+xiaomi_miot:
+  language: zh
+  translations:
+    Play Music: '播放音乐'

@@ -1,0 +1,823 @@
+button_card_templates:
+  !include_dir_merge_named button_card_templates
+
+kiosk_mode:
+  hide_header: true
+  hide_sidebar: true
+
+views:
+  - type: custom:grid-layout
+    title: 樱乐
+    layout:
+      #default
+      margin: 0
+      # 定义风格间隔
+      grid-gap: var(--custom-layout-card-padding)
+      # 定义列，4等分列和一个宽度为0的列
+      grid-template-columns: repeat(4, 1fr) 0
+      # 定义行，高度为0的行+创建了两行，其高度基于内容，但不会超过可用高度的100%，高度为0的行
+      grid-template-rows: 0 repeat(3, fit-content(100%)) 0fr
+      # 内容布局
+      grid-template-areas: |
+        "sidebar  .           .       .       ."
+        "sidebar  living-room studio  sovrum  ."
+        "sidebar  media       övrigt  hemma   ."
+        "sidebar  study-room  entryway  kitchen  ."
+        "sidebar  footer      footer  footer  ."
+      mediaquery:
+        #phone
+        "(max-width: 800px)":
+          grid-gap: calc(var(--custom-layout-card-padding) * 1.7)
+          grid-template-columns: 0 repeat(2, 1fr) 0
+          grid-template-rows: 0 repeat(7, fit-content(100%)) 0fr
+          grid-template-areas: |
+            ".  .           .        ."
+            ".  sidebar     sidebar  ."
+            ".  living-room studio   ."
+            ".  sovrum      media   ."
+            ".  övrigt       hemma    ."
+            ".  study-room   entryway    ."
+            ".  kitchen       .    ."
+            ".  footer      footer   ."
+            ".  .           .        ."
+        #portrait
+        "(max-width: 1200px)":
+          grid-gap: var(--custom-layout-card-padding)
+          grid-template-columns: repeat(3, 1fr) 0
+          grid-template-rows: 0 repeat(3, fit-content(100%)) 0fr
+          grid-template-areas: |
+            "sidebar  .           .       ."
+            "sidebar  living-room studio  ."
+            "sidebar  sovrum      media  ."
+            "sidebar  övrigt       hemma   ."
+            "sidebar  study-room   entryway   ."
+            "sidebar  kitchen   .   ."
+            "sidebar  footer      footer  ."
+            "sidebar  .           .       ."
+    cards:
+
+      #extra_styles fix, do not remove
+      #also warn if theme is not set
+
+      - type: custom:button-card
+        view_layout:
+          grid-area: 1 / 2 / 2 / 5
+        name: 请将主题设置为tablet
+        tap_action:
+          action: navigate
+          navigation_path: /profile
+        styles:
+          card:
+            - display: >
+                [[[
+                  return hass.themes.theme === 'tablet' ? 'none' : 'initial';
+                ]]]
+          name:
+            - z-index: 1
+            - overflow: visible
+            - color: red
+            - font-weight: bolder
+            - font-size: xxx-large
+            - background: yellow
+
+      #################################################
+      #                                               #
+      #                    侧边栏                      #
+      #                                               #
+      #################################################
+
+      - type: vertical-stack
+        view_layout:
+          grid-area: sidebar
+        cards:
+
+          - type: custom:button-card
+            entity: sensor.template_sidebar
+            template: sidebar
+
+          - type: conditional
+            conditions:
+              - entity: input_boolean.laundry_display
+                state: 'on'
+            card:
+              type: custom:button-card
+              entity: timer.laundry
+              double_tap_action:
+                action: call-service
+                service: input_boolean.turn_off
+                service_data:
+                  entity_id: input_boolean.laundry_display
+              template: laundry
+
+      #################################################
+      #                                               #
+      #                  living-room                          #
+      #                                               #
+      #################################################
+
+      - type: grid
+        title: 客厅
+        view_layout:
+          grid-area: living-room
+        columns: 1
+        cards:
+          - type: custom:swipe-card
+            parameters:
+              speed: 600
+              spaceBetween: 40
+              threshold: 5
+            cards:
+              - type: grid
+                columns: 2
+                cards:
+                  - type: custom:button-card
+                    entity: light.yeelink_mbulb3_8c97_light
+                    name: 餐厅灯
+                    double_tap_action:
+                      action: more-info
+                    template:
+                      - light
+                      - icon_hue
+
+                  - type: custom:button-card
+                    entity: light.yeelink_mbulb3_9b98_light
+                    name: 客厅灯
+                    double_tap_action:
+                      action: more-info
+                    template:
+                      - light
+                      - icon_hue
+
+                  - type: custom:button-card
+                    entity: sensor.miaomiaoce_t9_35a7_temperature_humidity_sensor
+                    name: 客厅温度
+                    tap_action:
+                      action: more-info
+                    custom_fields:
+                      graph:
+                        card:
+                          entities:
+                            - sensor.miaomiaoce_t9_35a7_temperature_humidity_sensor
+                    template:
+                      - temperature
+                      - icon_temperature
+
+                  - type: custom:button-card
+                    entity: sensor.miaomiaoce_t9_35a7_relative_humidity
+                    name: 客厅湿度
+                    tap_action:
+                      action: more-info
+                    custom_fields:
+                      graph:
+                        card:
+                          entities:
+                            - sensor.miaomiaoce_t9_35a7_relative_humidity
+                    template:
+                      - humidity
+                      - icon_humidity
+              - type: grid
+                columns: 2
+                cards:
+                  - type: custom:button-card
+                    entity: light.yeelink_mbulb3_8c97_light
+                    name: 餐厅灯
+                    hold_action:
+                      action: more-info
+                    template:
+                      - light
+                      - icon_hue
+
+                  - type: custom:button-card
+                    entity: light.yeelink_mbulb3_9b98_light
+                    name: 客厅灯
+                    hold_action:
+                      action: more-info
+                    template:
+                      - light
+                      - icon_hue
+
+                  - type: custom:button-card
+                    entity: sensor.miaomiaoce_t9_35a7_temperature_humidity_sensor
+                    name: 客厅温度
+                    tap_action:
+                      action: more-info
+                    custom_fields:
+                      graph:
+                        card:
+                          entities:
+                            - sensor.miaomiaoce_t9_35a7_temperature_humidity_sensor
+                    template:
+                      - temperature
+                      - icon_temperature
+
+                  - type: custom:button-card
+                    entity: sensor.miaomiaoce_t9_35a7_relative_humidity
+                    name: 客厅湿度
+                    tap_action:
+                      action: more-info
+                    custom_fields:
+                      graph:
+                        card:
+                          entities:
+                            - sensor.miaomiaoce_t9_35a7_relative_humidity
+                    template:
+                      - humidity
+                      - icon_humidity
+
+
+      #################################################
+      #                                               #
+      #                    STUDIO                     #
+      #                                               #
+      #################################################
+
+      - type: grid
+        title: 餐厅
+        view_layout:
+          grid-area: studio
+        columns: 2
+        cards:
+
+          - type: custom:button-card
+            entity: light.studio_dator
+            name: 主卧窗帘
+            template:
+              - light
+              - icon_spot
+
+          - type: custom:button-card
+            entity: light.studio_group
+            name: Taklampor
+            template:
+              - light
+              - icon_spot
+
+          - type: custom:button-card
+            entity: switch.imac
+            name: Dator
+            double_tap_action:
+              !include popup/studio_dator.yaml
+            template:
+              - base
+              - icon_imac
+              - loader
+              - lock
+            variables:
+              lock: >
+                [[[
+                  let lock = states['input_boolean.imac_lock'];
+                  return !lock || lock.state;
+                ]]]
+              trigger: >
+                [[[
+                  let trigger = states['script.home_leave'];
+                  return !trigger || trigger;
+                ]]]
+
+          - type: custom:button-card
+            entity: media_player.xiaomi_l16a_2ede_play_control
+            name: 音箱
+            tap_action:
+              action: more-info
+            template:
+              - base
+              - icon_monitors
+
+      #################################################
+      #                                               #
+      #                    SOVRUM                     #
+      #                                               #
+      #################################################
+
+      - type: grid
+        title: 主卧
+        view_layout:
+          grid-area: sovrum
+        columns: 2
+        cards:
+
+          - type: custom:button-card
+            entity: light.sovrum_group
+            name: Sänglampor
+            template:
+              - light
+              - icon_lamp
+
+          - type: custom:button-card
+            entity: climate.ac
+            name: Klimat
+            double_tap_action:
+              !include popup/sovrum_klimat.yaml
+            template:
+              - base
+              - icon_climate
+              - circle
+            variables:
+              circle_input: >
+                [[[
+                  if (entity) {
+                      return entity.state === 'cool'
+                          ? Math.round(entity.attributes.temperature).toString()
+                          : Math.round(entity.attributes.current_temperature).toString();
+                  }
+                ]]]
+              circle_input_unit: '°C'
+
+          - type: custom:button-card
+            entity: switch.ps5_635_power
+            name: Playstation
+            double_tap_action:
+              !include popup/sovrum_playstation.yaml
+            template:
+              - base
+              - icon_ps5
+              - loader
+
+          - type: custom:button-card
+            entity: media_player.samsung
+            name: "Tv\u00B2"
+            double_tap_action:
+              !include popup/sovrum_tv2.yaml
+            template:
+              - base
+              - icon_tv
+              - loader
+
+      #################################################
+      #                                               #
+      #                     MEDIA                     #
+      #                                               #
+      #################################################
+
+      - type: grid
+        title: 媒体
+        view_layout:
+          grid-area: media
+        columns: 1
+        cards:
+          - type: custom:swipe-card
+            parameters:
+              speed: 550
+              spaceBetween: 40
+              threshold: 5
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: conditional
+                    conditions:
+                      - entity: select.conditional_media
+                        state_not: Vardagsrum
+
+                      - entity: select.conditional_media
+                        state_not: Sovrum
+
+                      - entity: select.conditional_media
+                        state_not: Spotify
+
+                      - entity: select.conditional_media
+                        state_not: Kök
+                    card:
+                      type: custom:button-card
+                      entity: sensor.plex_recently_added
+                      name: 默认
+                      tap_action:
+                        action: none
+                      template:
+                        - conditional_media
+
+                  - type: conditional
+                    conditions:
+                      - entity: select.conditional_media
+                        state: Vardagsrum
+                    card:
+                      type: custom:button-card
+                      entity: media_player.vardagsrum
+                      triggers_update: sensor.youtube_watching
+                      template:
+                        - conditional_media
+                        - icon_apple_tv
+
+                  - type: conditional
+                    conditions:
+                      - entity: select.conditional_media
+                        state: Sovrum
+                    card:
+                      type: custom:button-card
+                      entity: media_player.sovrum
+                      triggers_update: sensor.youtube_watching
+                      template:
+                        - conditional_media
+                        - icon_apple_tv
+
+                  - type: conditional
+                    conditions:
+                      - entity: select.conditional_media
+                        state: Spotify
+                    card:
+                      type: custom:button-card
+                      entity: media_player.spotify
+                      template:
+                        - conditional_media
+                        - icon_spotify
+
+                  - type: conditional
+                    conditions:
+                      - entity: select.conditional_media
+                        state: Kök
+                    card:
+                      type: custom:button-card
+                      entity: media_player.kok
+                      template:
+                        - conditional_media
+                        - icon_nest_mini
+
+              - type: grid
+                columns: 2
+                cards:
+                  - type: custom:button-card
+                    entity: media_player.vardagsrum
+                    triggers_update: sensor.youtube_watching
+                    name: 闭月
+                    template:
+                      - media
+                      - icon_apple_tv
+
+                  - type: custom:button-card
+                    entity: media_player.sovrum
+                    triggers_update: sensor.youtube_watching
+                    name: 羞花
+                    template:
+                      - media
+                      - icon_apple_tv
+
+                  - type: custom:button-card
+                    entity: media_player.spotify
+                    name: 沉鱼
+                    template:
+                      - media
+                      - icon_spotify
+
+                  - type: custom:button-card
+                    entity: media_player.kok
+                    name: 落雁
+                    template:
+                      - media
+                      - icon_nest_mini
+
+      #################################################
+      #                                               #
+      #                    ÖVRIGT                     #
+      #                                               #
+      #################################################
+
+      - type: grid
+        title: 次卧
+        view_layout:
+          grid-area: övrigt
+        columns: 2
+        cards:
+
+          - type: custom:button-card
+            entity: light.badrum_group
+            name: Badrum
+            template:
+              - light
+              - icon_bathroom
+
+          - type: custom:button-card
+            entity: switch.gosund_fan_switch
+            name: "Fläkt\u00B2"
+            double_tap_action:
+              !include popup/studio_flakt.yaml
+            template:
+              - base
+              - icon_fan2
+              - loader
+
+          - type: custom:button-card
+            entity: light.garderob_lampa
+            name: Garderob
+            template:
+              - light
+              - icon_closet
+
+          - type: custom:button-card
+            entity: light.hall_group
+            name: Hall
+            template:
+              - light
+              - icon_spot
+
+      #################################################
+      #                                               #
+      #                     HEMMA                     #
+      #                                               #
+      #################################################
+
+      - type: grid
+        title: 老人房
+        view_layout:
+          grid-area: hemma
+        columns: 2
+        cards:
+
+          - type: custom:button-card
+            entity: person.matte
+            name: Mattias
+            triggers_update:
+              - sensor.matte_last_changed
+            double_tap_action:
+              !include popup/hemma_mattias.yaml
+            variables:
+              retain: sensor.matte_last_changed
+            template:
+              - person
+              - circle
+
+          - type: custom:button-card
+            entity: person.sanja
+            name: Sanja
+            triggers_update:
+              - sensor.sanja_last_changed
+            double_tap_action:
+              !include popup/hemma_sanja.yaml
+            variables:
+              retain: sensor.sanja_last_changed
+            template:
+              - person
+              - circle
+
+          - type: custom:button-card
+            entity: script.home_leave
+            name: Stäng allt
+            template:
+              - base
+              - icon_away
+
+          - type: custom:button-card
+            entity: script.home_arrive
+            name: Hemma
+            template:
+              - base
+              - icon_home
+
+      #################################################
+      #                                               #
+      #                     study-room                #
+      #                                               #
+      #################################################
+
+      - type: grid
+        title: 书房
+        view_layout:
+          grid-area: study-room
+        columns: 2
+        cards:
+
+          - type: custom:button-card
+            entity: person.matte
+            name: Mattias
+            triggers_update:
+              - sensor.matte_last_changed
+            double_tap_action:
+              !include popup/hemma_mattias.yaml
+            variables:
+              retain: sensor.matte_last_changed
+            template:
+              - person
+              - circle
+
+          - type: custom:button-card
+            entity: person.sanja
+            name: Sanja
+            triggers_update:
+              - sensor.sanja_last_changed
+            double_tap_action:
+              !include popup/hemma_sanja.yaml
+            variables:
+              retain: sensor.sanja_last_changed
+            template:
+              - person
+              - circle
+
+          - type: custom:button-card
+            entity: script.home_leave
+            name: Stäng allt
+            template:
+              - base
+              - icon_away
+
+          - type: custom:button-card
+            entity: script.home_arrive
+            name: Hemma
+            template:
+              - base
+              - icon_home
+
+      #################################################
+      #                                               #
+      #                     玄关                       #
+      #                                               #
+      #################################################
+
+      - type: grid
+        title: 玄关
+        view_layout:
+          grid-area: entryway
+        columns: 2
+        cards:
+
+          - type: custom:button-card
+            entity: person.matte
+            name: Mattias
+            triggers_update:
+              - sensor.matte_last_changed
+            double_tap_action:
+              !include popup/hemma_mattias.yaml
+            variables:
+              retain: sensor.matte_last_changed
+            template:
+              - person
+              - circle
+
+          - type: custom:button-card
+            entity: person.sanja
+            name: Sanja
+            triggers_update:
+              - sensor.sanja_last_changed
+            double_tap_action:
+              !include popup/hemma_sanja.yaml
+            variables:
+              retain: sensor.sanja_last_changed
+            template:
+              - person
+              - circle
+
+          - type: custom:button-card
+            entity: script.home_leave
+            name: Stäng allt
+            template:
+              - base
+              - icon_away
+
+          - type: custom:button-card
+            entity: script.home_arrive
+            name: Hemma
+            template:
+              - base
+              - icon_home
+
+
+      #################################################
+      #                                               #
+      #                     kitchen                     #
+      #                                               #
+      #################################################
+
+      - type: grid
+        title: 厨房
+        view_layout:
+          grid-area: kitchen
+        columns: 2
+        cards:
+
+          - type: custom:button-card
+            entity: person.matte
+            name: Mattias
+            triggers_update:
+              - sensor.matte_last_changed
+            double_tap_action:
+              !include popup/hemma_mattias.yaml
+            variables:
+              retain: sensor.matte_last_changed
+            template:
+              - person
+              - circle
+
+          - type: custom:button-card
+            entity: person.sanja
+            name: Sanja
+            triggers_update:
+              - sensor.sanja_last_changed
+            double_tap_action:
+              !include popup/hemma_sanja.yaml
+            variables:
+              retain: sensor.sanja_last_changed
+            template:
+              - person
+              - circle
+
+          - type: custom:button-card
+            entity: script.home_leave
+            name: Stäng allt
+            template:
+              - base
+              - icon_away
+
+          - type: custom:button-card
+            entity: script.home_arrive
+            name: Hemma
+            template:
+              - base
+              - icon_home
+
+      #################################################
+      #                                               #
+      #                    FOOTER                     #
+      #                                               #
+      #################################################
+
+      - type: horizontal-stack
+        view_layout:
+          grid-area: footer
+        cards:
+
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:nas"></ha-icon> NAS
+            tap_action:
+              !include popup/footer_nas.yaml
+            triggers_update:
+              - update.nas_dsm_update
+              - sensor.nas_volume_1_status
+              - binary_sensor.nas_security_status
+              - sensor.disk_use_percent
+            variables:
+              notify: >
+                [[[
+                  let id = this._config.triggers_update;
+                  if (id.every(e => states[e]))
+                      return states[id[0]].state === 'on'
+                          ? 1
+                          : states[id[1]].state === 'background_scrubbing' ||
+                            states[id[2]].state === 'on' ||
+                            parseFloat(states[id[3]].state) >= 85;
+                ]]]
+            template: footer
+
+          - type: custom:button-card
+            entity: sensor.template_updates
+            name: >
+              <ha-icon icon="mdi:arrow-up-bold-circle-outline"></ha-icon> Uppdatera
+            tap_action:
+              !include popup/footer_updates.yaml
+            variables:
+              notify: >
+                [[[
+                  return parseInt(entity?.state);
+                ]]]
+            template: footer
+
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:robot-vacuum-variant"></ha-icon> Städa
+            tap_action:
+              !include popup/footer_vacuum.yaml
+            triggers_update:
+              - sensor.date
+            variables:
+              notify: >
+                [[[
+                  let id = states['sensor.morty_last_clean_end'];
+                  if (id) return (Date.now() - Date.parse(id.state)) > 6048e5;
+                ]]]
+            template: footer
+
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:chart-line-variant"></ha-icon> Historik
+            tap_action:
+              !include popup/footer_history.yaml
+            template: footer
+
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:tablet"></ha-icon> Platta
+            tap_action:
+              !include popup/footer_tablet.yaml
+            variables:
+              notify: >
+                [[[
+                  let id = states['binary_sensor.galaxy_tab_a_plugged_in'];
+                  if (id) return id.state === 'off';
+                ]]]
+            template: footer
+
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:router-wireless"></ha-icon> Router
+            tap_action:
+              !include popup/footer_router.yaml
+            triggers_update:
+              - update.unifi_dream_machine
+              - binary_sensor.template_udm_internet
+            variables:
+              notify: >
+                [[[
+                  let id = this._config.triggers_update;
+                  if (id.every(e => states[e]))
+                      return states[id[0]].state === 'on'
+                          ? 1
+                          : states[id[1]].state === 'off';
+                ]]]
+            template: footer
