@@ -235,53 +235,10 @@ views:
         title: 餐厅
         view_layout:
           grid-area: studio
-        columns: 2
+        columns: 1
         cards:
-
-          - type: custom:button-card
-            entity: light.studio_dator
-            name: 主卧窗帘
-            template:
-              - light
-              - icon_spot
-
-          - type: custom:button-card
-            entity: light.studio_group
-            name: Taklampor
-            template:
-              - light
-              - icon_spot
-
-          - type: custom:button-card
-            entity: switch.imac
-            name: Dator
-            double_tap_action:
-              !include popup/studio_dator.yaml
-            template:
-              - base
-              - icon_imac
-              - loader
-              - lock
-            variables:
-              lock: >
-                [[[
-                  let lock = states['input_boolean.imac_lock'];
-                  return !lock || lock.state;
-                ]]]
-              trigger: >
-                [[[
-                  let trigger = states['script.home_leave'];
-                  return !trigger || trigger;
-                ]]]
-
-          - type: custom:button-card
+          - type: media-control
             entity: media_player.xiaomi_l16a_2ede_play_control
-            name: 音箱
-            tap_action:
-              action: more-info
-            template:
-              - base
-              - icon_monitors
 
       #################################################
       #                                               #
